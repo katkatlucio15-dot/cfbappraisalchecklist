@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Unit Condition Scoring</title>
+  <style>
+    body {
+      font-family: Arial;
+      background: #f5f5f5;
+      padding: 20px;
+    }
+    h1 {
+      text-align: center;
+      background: red;
+      color: white;
+      padding: 10px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+    }
+    th, td {
+      padding: 10px;
+      text-align: center;
+      border: 1px solid #ccc;
+    }
+    th {
+      background: black;
+      color: white;
+    }
+    select {
+      padding: 5px;
+      font-size: 16px;
+      width: 70px;
+    }
+    .result {
+      font-weight: bold;
+      font-size: 18px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>UNIT CONDITION SCORING (Enter 0–3 only)</h1>
+
+<table>
+  <thead>
+    <tr>
+      <th>Category</th>
+      <th>Score (0–3)</th>
+      <th>Weight</th>
+      <th>Weighted Score</th>
+    </tr>
+  </thead>
+
+  <tbody id="tableBody"></tbody>
+
+  <tfoot>
+    <tr>
+      <td colspan="3"><b>Total Score</b></td>
+      <td id="total">0.00</td>
+    </tr>
+    <tr>
+      <td colspan="3"><b>Classification</b></td>
+      <td id="grade" class="result">-</td>
+    </tr>
+  </tfoot>
+</table>
+
+<script>
+  const data = [
+    { name: "Starting", weight: 0.15 },
+    { name: "Engine", weight: 0.20 },
+    { name: "Oil Leaks", weight: 0.15 },
+    { name: "Tires", weight: 0.05 },
+    { name: "Brakes", weight: 0.10 },
+    { name: "Fuel Tank", weight: 0.05 },
+    { name: "Frame, Stand, Headlight", weight: 0.20 },
+    { name: "Mileage", weight: 0.10 }
+  ];
+
+  const tbody = document.getElementById("tableBody");
+
+  data.forEach((item, i) => {
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
+      <td>${item.name}</td>
+      <td>
+        <select onchange="calculate()">
+          <option value="">-</option>
+          <option value="3">3</option>
+          <option value="2">2</option>
+          <option value="1">1</option>
+          <option value="0">0</option>
+        </select>
+      </td>
+      <td>${item.weight * 100}%</td>
+      <td class="weighted">0.00</td>
+    `;
+
+    tbody.appendChild(row);
+  });
+
+  function calculate() {
+    let total = 0;
+
+    const rows = document.querySelectorAll("#tableBody tr");
+
+    rows.forEach((row, i) => {
+      const select = row.querySelector("select");
+      const score = parseFloat(select.value);
+
+      if (!isNaN(score)) {
+        const weight = data[i].weight;
+        const weighted = score * weight;
+
+        row.querySelector(".weighted").textContent = weighted.toFixed(2);
+        total += weighted;
+      } else {
+        row.querySelector(".weighted").textContent = "0.00";
+      }
+    });
+
+    document.getElementById("total").textContent = total.toFixed(2);
+
+    let grade = "-";
+    if (total >= 2.5) grade = "A";
+    else if (total >= 1.8) grade = "B";
+    else if (total >= 1) grade = "C";
+    else if (total > 0) grade = "Reject";
+
+    document.getElementById("grade").textContent = grade;
+  }
+</script>
+
+</body>
+</html>
