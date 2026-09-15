@@ -4,198 +4,617 @@
   <title>Unit Condition Scoring</title>
 
   <style>
-    body {
-      font-family: Arial;
-      background: #f5f5f5;
-      padding: 20px;
+    * {
+      box-sizing: border-box;
     }
 
-    h1 {
-      text-align: center;
-      background: red;
-      color: white;
-      padding: 10px;
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f3f4f6;
+      color: #222;
     }
+
+    /* =========================
+       HEADER
+    ========================= */
+
+    .header {
+      background: #d90000;
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+    }
+
+    .header h1 {
+      margin: 0;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .header p {
+      margin: 8px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+
+    /* =========================
+       MAIN CONTAINER
+    ========================= */
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+
+
+    /* =========================
+       SCORING CARD
+    ========================= */
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+      overflow: hidden;
+    }
+
+
+    .card-header {
+      padding: 20px 25px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .card-header h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .card-header p {
+      margin: 6px 0 0;
+      color: #666;
+      font-size: 14px;
+    }
+
+
+    /* =========================
+       TABLE
+    ========================= */
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: white;
-    }
-
-    th, td {
-      padding: 10px;
-      text-align: center;
-      border: 1px solid #ccc;
     }
 
     th {
-      background: black;
+      background: #1f1f1f;
       color: white;
+      padding: 14px 16px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
+
+    td {
+      padding: 15px 16px;
+      border-bottom: 1px solid #eeeeee;
+      text-align: center;
+      font-size: 14px;
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
+
+    tbody tr:hover {
+      background: #fafafa;
+    }
+
+
+    /* Category column */
+
+    td:first-child {
+      text-align: left;
+      font-weight: 600;
+      color: #333;
+    }
+
+
+    /* =========================
+       SCORE SELECT
+    ========================= */
 
     select {
-      padding: 5px;
-      font-size: 16px;
-      width: 70px;
+      width: 80px;
+      padding: 9px 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: white;
+      font-size: 15px;
+      font-weight: 600;
+      text-align: center;
+      cursor: pointer;
+      outline: none;
     }
 
-    .result {
-      font-weight: bold;
-      font-size: 18px;
+    select:focus {
+      border-color: #d90000;
+      box-shadow: 0 0 0 2px rgba(217,0,0,0.1);
     }
 
-    /* Warning message */
+
+    /* =========================
+       WEIGHT
+    ========================= */
+
+    .weight {
+      color: #555;
+      font-weight: 600;
+    }
+
+
+    /* =========================
+       WEIGHTED SCORE
+    ========================= */
+
+    .weighted {
+      font-weight: 600;
+      color: #333;
+    }
+
+
+    /* =========================
+       WARNING
+    ========================= */
+
     #warning {
       display: none;
-      margin-top: 15px;
-      padding: 12px;
+
+      margin: 20px 25px;
+
+      padding: 14px 18px;
+
+      background: #fff4f4;
+
+      color: #c00000;
+
+      border: 1px solid #ffb5b5;
+
+      border-radius: 8px;
+
+      font-size: 14px;
+
+      font-weight: 600;
+
       text-align: center;
-      background: #ffe6e6;
-      color: red;
-      font-weight: bold;
-      border: 1px solid red;
-      border-radius: 5px;
     }
 
-    /* Hide results until all categories are filled */
+
+    /* =========================
+       RESULTS
+    ========================= */
+
     #results {
       display: none;
     }
+
+    .results-container {
+      margin-top: 20px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+
+    .result-box {
+      background: white;
+      border-radius: 10px;
+      padding: 20px;
+      text-align: center;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+    }
+
+    .result-label {
+      font-size: 13px;
+      color: #777;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    #total {
+      font-size: 30px;
+      font-weight: 700;
+      color: #d90000;
+    }
+
+    #grade {
+      font-size: 30px;
+      font-weight: 700;
+    }
+
+
+    /* =========================
+       FOOTER
+    ========================= */
+
+    .footer {
+      text-align: center;
+      color: #888;
+      font-size: 12px;
+      margin-top: 25px;
+      padding-bottom: 25px;
+    }
+
+
+    /* =========================
+       MOBILE
+    ========================= */
+
+    @media (max-width: 700px) {
+
+      .container {
+        padding: 0 10px;
+        margin-top: 15px;
+      }
+
+      .header h1 {
+        font-size: 21px;
+      }
+
+      .card-header {
+        padding: 17px;
+      }
+
+      th, td {
+        padding: 11px 7px;
+        font-size: 12px;
+      }
+
+      select {
+        width: 65px;
+        padding: 8px 5px;
+      }
+
+      .results-container {
+        grid-template-columns: 1fr;
+      }
+
+    }
+
   </style>
 </head>
 
+
 <body>
 
-  <h1>UNIT CONDITION SCORING (Enter 0–3 only)</h1>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Category</th>
-        <th>Score (0–3)</th>
-        <th>Weight</th>
-        <th>Weighted Score</th>
-      </tr>
-    </thead>
+  <!-- =========================
+       HEADER
+  ========================= -->
 
-    <tbody id="tableBody"></tbody>
+  <div class="header">
 
-    <!-- RESULTS -->
-    <tbody id="results">
+    <h1>UNIT CONDITION SCORING</h1>
 
-      <tr>
-        <td colspan="3"><b>Total Score</b></td>
-        <td id="total">0.00</td>
-      </tr>
+    <p>
+      Motorcycle Appraisal • Enter a score from 0–3 for each category
+    </p>
 
-      <tr>
-        <td colspan="3"><b>Classification</b></td>
-        <td id="grade" class="result">-</td>
-      </tr>
-
-    </tbody>
-  </table>
-
-  <!-- WARNING -->
-  <div id="warning">
-    ⚠️ Please fill out all categories first.
   </div>
 
 
+
+  <!-- =========================
+       MAIN CONTENT
+  ========================= -->
+
+  <div class="container">
+
+
+    <div class="card">
+
+
+      <div class="card-header">
+
+        <h2>Unit Condition Assessment</h2>
+
+        <p>
+          Please complete all categories before viewing the final score.
+        </p>
+
+      </div>
+
+
+
+      <table>
+
+        <thead>
+
+          <tr>
+
+            <th>Category</th>
+
+            <th>Score</th>
+
+            <th>Weight</th>
+
+            <th>Weighted Score</th>
+
+          </tr>
+
+        </thead>
+
+
+        <tbody id="tableBody"></tbody>
+
+      </table>
+
+
+
+      <!-- WARNING -->
+
+      <div id="warning">
+
+        ⚠️ Please fill out all categories first.
+
+      </div>
+
+
+    </div>
+
+
+
+    <!-- =========================
+         RESULTS
+    ========================= -->
+
+    <div id="results">
+
+      <div class="results-container">
+
+
+        <div class="result-box">
+
+          <div class="result-label">
+            Total Score
+          </div>
+
+          <div id="total">
+            0.00
+          </div>
+
+        </div>
+
+
+
+        <div class="result-box">
+
+          <div class="result-label">
+            Classification
+          </div>
+
+          <div id="grade">
+            -
+          </div>
+
+        </div>
+
+
+      </div>
+
+    </div>
+
+
+
+    <div class="footer">
+
+      Unit Condition Scoring System
+
+    </div>
+
+
+  </div>
+
+
+
   <script>
+
 
     // ==========================================
     // CATEGORY ORDER AND WEIGHTS
     // ==========================================
 
     const data = [
-      { name: "Mileage", weight: 0.10 },
-      { name: "Tires", weight: 0.05 },
-      { name: "Frame, Stand, Headlight", weight: 0.20 },
-      { name: "Oil Leaks", weight: 0.15 },
-      { name: "Starting", weight: 0.15 },
-      { name: "Engine Sound", weight: 0.20 },
-      { name: "Brakes", weight: 0.10 },
-      { name: "Fuel Tank", weight: 0.05 }
+
+      {
+        name: "Mileage",
+        weight: 0.10
+      },
+
+      {
+        name: "Tires",
+        weight: 0.05
+      },
+
+      {
+        name: "Frame, Stand, Headlight",
+        weight: 0.20
+      },
+
+      {
+        name: "Oil Leaks",
+        weight: 0.15
+      },
+
+      {
+        name: "Starting",
+        weight: 0.15
+      },
+
+      {
+        name: "Engine Sound",
+        weight: 0.20
+      },
+
+      {
+        name: "Brakes",
+        weight: 0.10
+      },
+
+      {
+        name: "Fuel Tank",
+        weight: 0.05
+      }
+
     ];
 
 
+
     // ==========================================
-    // CREATE TABLE
+    // CREATE TABLE ROWS
     // ==========================================
 
-    const tbody = document.getElementById("tableBody");
+    const tbody =
+      document.getElementById("tableBody");
+
 
     data.forEach((item, i) => {
 
-      const row = document.createElement("tr");
+
+      const row =
+        document.createElement("tr");
+
 
       row.innerHTML = `
-        <td>${item.name}</td>
 
         <td>
-          <select onchange="calculate()">
-            <option value="">-</option>
-            <option value="3">3</option>
-            <option value="2">2</option>
-            <option value="1">1</option>
-            <option value="0">0</option>
-          </select>
+          ${item.name}
         </td>
 
-        <td>${item.weight * 100}%</td>
 
-        <td class="weighted">0.00</td>
+        <td>
+
+          <select onchange="calculate()">
+
+            <option value="">
+              Select
+            </option>
+
+            <option value="3">
+              3
+            </option>
+
+            <option value="2">
+              2
+            </option>
+
+            <option value="1">
+              1
+            </option>
+
+            <option value="0">
+              0
+            </option>
+
+          </select>
+
+        </td>
+
+
+        <td class="weight">
+
+          ${item.weight * 100}%
+
+        </td>
+
+
+        <td class="weighted">
+
+          0.00
+
+        </td>
+
       `;
+
 
       tbody.appendChild(row);
 
     });
 
 
+
     // ==========================================
-    // CALCULATE SCORE
+    // CALCULATE
     // ==========================================
 
     function calculate() {
 
-      const rows = document.querySelectorAll("#tableBody tr");
+
+      const rows =
+        document.querySelectorAll(
+          "#tableBody tr"
+        );
+
 
       let allFilled = true;
+
       let total = 0;
 
 
+
       // ------------------------------------------
-      // CHECK ALL CATEGORIES
+      // CHECK EACH CATEGORY
       // ------------------------------------------
 
       rows.forEach((row, i) => {
 
-        const select = row.querySelector("select");
 
-        const score = parseFloat(select.value);
+        const select =
+          row.querySelector("select");
 
 
-        // Category has NOT been filled
+        const score =
+          parseFloat(select.value);
+
+
+
+        // NOT FILLED
+
         if (isNaN(score)) {
+
 
           allFilled = false;
 
-          row.querySelector(".weighted").textContent = "0.00";
+
+          row.querySelector(
+            ".weighted"
+          ).textContent = "0.00";
+
 
         }
 
 
-        // Category has been filled
+        // FILLED
+
         else {
 
-          const weight = data[i].weight;
 
-          const weighted = score * weight;
+          const weight =
+            data[i].weight;
 
-          row.querySelector(".weighted").textContent =
+
+          const weighted =
+            score * weight;
+
+
+          row.querySelector(
+            ".weighted"
+          ).textContent =
             weighted.toFixed(2);
+
 
           total += weighted;
 
@@ -204,51 +623,68 @@
       });
 
 
-      // ------------------------------------------
-      // GET WARNING + RESULTS
-      // ------------------------------------------
 
-      const warning = document.getElementById("warning");
+      // ==========================================
+      // GET ELEMENTS
+      // ==========================================
 
-      const results = document.getElementById("results");
+      const warning =
+        document.getElementById("warning");
 
 
-      // ------------------------------------------
-      // NOT ALL CATEGORIES ARE FILLED
-      // ------------------------------------------
+      const results =
+        document.getElementById("results");
+
+
+
+      // ==========================================
+      // INCOMPLETE
+      // ==========================================
 
       if (!allFilled) {
 
-        // Show warning
-        warning.style.display = "block";
 
-        // Hide total and classification
-        results.style.display = "none";
+        warning.style.display =
+          "block";
+
+
+        results.style.display =
+          "none";
+
 
         return;
+
       }
 
 
-      // ------------------------------------------
-      // ALL CATEGORIES ARE FILLED
-      // ------------------------------------------
 
-      warning.style.display = "none";
+      // ==========================================
+      // COMPLETE
+      // ==========================================
 
-      results.style.display = "table-row-group";
+      warning.style.display =
+        "none";
 
 
-      // ------------------------------------------
-      // DISPLAY TOTAL SCORE
-      // ------------------------------------------
+      results.style.display =
+        "block";
 
-      document.getElementById("total").textContent =
+
+
+      // ==========================================
+      // TOTAL SCORE
+      // ==========================================
+
+      document.getElementById(
+        "total"
+      ).textContent =
         total.toFixed(2);
 
 
-      // ------------------------------------------
+
+      // ==========================================
       // CLASSIFICATION
-      // ------------------------------------------
+      // ==========================================
 
       let grade = "-";
 
@@ -272,12 +708,17 @@
       }
 
 
-      // Display classification
-      document.getElementById("grade").textContent = grade;
+
+      document.getElementById(
+        "grade"
+      ).textContent =
+        grade;
+
 
     }
 
   </script>
+
 
 </body>
 </html>
