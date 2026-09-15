@@ -45,7 +45,7 @@
       font-size: 18px;
     }
 
-
+    /* Warning message */
     #warning {
       display: none;
       margin-top: 15px;
@@ -58,6 +58,7 @@
       border-radius: 5px;
     }
 
+    /* Hide results until all categories are filled */
     #results {
       display: none;
     }
@@ -66,194 +67,217 @@
 
 <body>
 
-<h1>UNIT CONDITION SCORING (Enter 0–3 only)</h1>
+  <h1>UNIT CONDITION SCORING (Enter 0–3 only)</h1>
 
-<table>
-  <thead>
-    <tr>
-      <th>Category</th>
-      <th>Score (0–3)</th>
-      <th>Weight</th>
-      <th>Weighted Score</th>
-    </tr>
-  </thead>
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Score (0–3)</th>
+        <th>Weight</th>
+        <th>Weighted Score</th>
+      </tr>
+    </thead>
 
-  <tbody id="tableBody"></tbody>
+    <tbody id="tableBody"></tbody>
 
-  <!-- RESULTS -->
-  <tbody id="results">
+    <!-- RESULTS -->
+    <tbody id="results">
 
-    <tr>
-      <td colspan="3"><b>Total Score</b></td>
-      <td id="total">0.00</td>
-    </tr>
+      <tr>
+        <td colspan="3"><b>Total Score</b></td>
+        <td id="total">0.00</td>
+      </tr>
 
-    <tr>
-      <td colspan="3"><b>Classification</b></td>
-      <td id="grade" class="result">-</td>
-    </tr>
+      <tr>
+        <td colspan="3"><b>Classification</b></td>
+        <td id="grade" class="result">-</td>
+      </tr>
 
-  </tbody>
+    </tbody>
+  </table>
 
-</table>
-
-<!-- WARNING MESSAGE -->
-<div id="warning">
-  ⚠️ Please fill out all categories first.
-</div>
-
-
-<script>
-
-  // CATEGORY ORDER MATCHES THE PICTURE
-  const data = [
-    { name: "Mileage", weight: 0.10 },
-    { name: "Tires", weight: 0.05 },
-    { name: "Frame, Stand, Headlight", weight: 0.20 },
-    { name: "Oil Leaks", weight: 0.15 },
-    { name: "Starting", weight: 0.15 },
-    { name: "Engine Sound", weight: 0.20 },
-    { name: "Brakes", weight: 0.10 },
-    { name: "Fuel Tank", weight: 0.05 }
-  ];
+  <!-- WARNING -->
+  <div id="warning">
+    ⚠️ Please fill out all categories first.
+  </div>
 
 
-  const tbody = document.getElementById("tableBody");
+  <script>
+
+    // ==========================================
+    // CATEGORY ORDER AND WEIGHTS
+    // ==========================================
+
+    const data = [
+      { name: "Mileage", weight: 0.10 },
+      { name: "Tires", weight: 0.05 },
+      { name: "Frame, Stand, Headlight", weight: 0.20 },
+      { name: "Oil Leaks", weight: 0.15 },
+      { name: "Starting", weight: 0.15 },
+      { name: "Engine Sound", weight: 0.20 },
+      { name: "Brakes", weight: 0.10 },
+      { name: "Fuel Tank", weight: 0.05 }
+    ];
 
 
-  // CREATE TABLE ROWS
-  data.forEach((item, i) => {
+    // ==========================================
+    // CREATE TABLE
+    // ==========================================
 
-    const row = document.createElement("tr");
+    const tbody = document.getElementById("tableBody");
 
-    row.innerHTML = `
-      <td>${item.name}</td>
+    data.forEach((item, i) => {
 
-      <td>
-        <select onchange="calculate()">
+      const row = document.createElement("tr");
 
-          <option value="">-</option>
+      row.innerHTML = `
+        <td>${item.name}</td>
 
-          <option value="3">3</option>
+        <td>
+          <select onchange="calculate()">
+            <option value="">-</option>
+            <option value="3">3</option>
+            <option value="2">2</option>
+            <option value="1">1</option>
+            <option value="0">0</option>
+          </select>
+        </td>
 
-          <option value="2">2</option>
+        <td>${item.weight * 100}%</td>
 
-          <option value="1">1</option>
+        <td class="weighted">0.00</td>
+      `;
 
-          <option value="0">0</option>
-
-        </select>
-      </td>
-
-      <td>${item.weight * 100}%</td>
-
-      <td class="weighted">0.00</td>
-    `;
-
-    tbody.appendChild(row);
-
-  });
-
-
-  function calculate() {
-
-    const rows = document.querySelectorAll("#tableBody tr");
-
-    let allFilled = true;
-    let total = 0;
-
-
-    // CHECK IF ALL CATEGORIES HAVE AN INPUT
-    rows.forEach((row, i) => {
-
-      const select = row.querySelector("select");
-
-      const score = parseFloat(select.value);
-
-
-      // If no score was selected
-      if (isNaN(score)) {
-
-        allFilled = false;
-
-        row.querySelector(".weighted").textContent = "0.00";
-
-      } 
-
-      else {
-
-        const weight = data[i].weight;
-
-        const weighted = score * weight;
-
-        row.querySelector(".weighted").textContent =
-          weighted.toFixed(2);
-
-        total += weighted;
-
-      }
+      tbody.appendChild(row);
 
     });
 
 
-    // GET WARNING AND RESULTS ELEMENTS
-    const warning = document.getElementById("warning");
+    // ==========================================
+    // CALCULATE SCORE
+    // ==========================================
 
-    const results = document.getElementById("results");
+    function calculate() {
+
+      const rows = document.querySelectorAll("#tableBody tr");
+
+      let allFilled = true;
+      let total = 0;
 
 
-    // IF NOT EVERYTHING IS FILLED
-    if (!allFilled) {
+      // ------------------------------------------
+      // CHECK ALL CATEGORIES
+      // ------------------------------------------
 
-      // Show warning
-      warning.style.display = "block";
+      rows.forEach((row, i) => {
 
-      // Hide total and classification
-      results.style.display = "none";
+        const select = row.querySelector("select");
 
-      return;
+        const score = parseFloat(select.value);
+
+
+        // Category has NOT been filled
+        if (isNaN(score)) {
+
+          allFilled = false;
+
+          row.querySelector(".weighted").textContent = "0.00";
+
+        }
+
+
+        // Category has been filled
+        else {
+
+          const weight = data[i].weight;
+
+          const weighted = score * weight;
+
+          row.querySelector(".weighted").textContent =
+            weighted.toFixed(2);
+
+          total += weighted;
+
+        }
+
+      });
+
+
+      // ------------------------------------------
+      // GET WARNING + RESULTS
+      // ------------------------------------------
+
+      const warning = document.getElementById("warning");
+
+      const results = document.getElementById("results");
+
+
+      // ------------------------------------------
+      // NOT ALL CATEGORIES ARE FILLED
+      // ------------------------------------------
+
+      if (!allFilled) {
+
+        // Show warning
+        warning.style.display = "block";
+
+        // Hide total and classification
+        results.style.display = "none";
+
+        return;
+      }
+
+
+      // ------------------------------------------
+      // ALL CATEGORIES ARE FILLED
+      // ------------------------------------------
+
+      warning.style.display = "none";
+
+      results.style.display = "table-row-group";
+
+
+      // ------------------------------------------
+      // DISPLAY TOTAL SCORE
+      // ------------------------------------------
+
+      document.getElementById("total").textContent =
+        total.toFixed(2);
+
+
+      // ------------------------------------------
+      // CLASSIFICATION
+      // ------------------------------------------
+
+      let grade = "-";
+
+
+      if (total >= 2.5) {
+
+        grade = "A";
+
+      }
+
+      else if (total >= 1.8) {
+
+        grade = "B";
+
+      }
+
+      else {
+
+        grade = "C";
+
+      }
+
+
+      // Display classification
+      document.getElementById("grade").textContent = grade;
+
     }
 
-
-    // EVERYTHING IS FILLED
-    warning.style.display = "none";
-
-    results.style.display = "table-row-group";
-
-
-    // DISPLAY TOTAL
-    document.getElementById("total").textContent =
-      total.toFixed(2);
-
-
-    // CLASSIFICATION
-    let grade = "-";
-
-
-    if (total >= 2.5) {
-      grade = "A";
-    }
-
-    else if (total >= 1.8) {
-
-      grade = "B";
-
-    }
-
-    else if (total < 1.8) {
-
-      grade = "C";
-
-    }
-
-    }
-
-
-    document.getElementById("grade").textContent = grade;
-
-  }
-
-</script>
+  </script>
 
 </body>
 </html>
